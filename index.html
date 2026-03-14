@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JAX & KING — La Jolla's Premier Hair Salon</title>
+<meta name="description" content="JAX & KING is an award-winning, design-forward hair salon in La Jolla, CA. Specializing in customized color, Hollywood highlights, balayage, and precision cuts. As seen on E!">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --white: #f8f6f3;
+    --cream: #eee9e2;
+    --gold: #b89b6a;
+    --gold-light: #d4bc8e;
+    --gold-dark: #8c7549;
+    --charcoal: #2a2a2a;
+    --muted: #8a8580;
+    --serif: 'Cormorant Garamond', Georgia, serif;
+    --sans: 'Outfit', system-ui, sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--black);
+    color: var(--white);
+    overflow-x: hidden;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 200px;
+  }
+
+  nav {
+    position: fixed; top: 0; width: 100%; z-index: 100;
+    padding: 1.5rem 3rem;
+    display: flex; justify-content: space-between; align-items: center;
+    transition: background 0.5s ease, backdrop-filter 0.5s ease, padding 0.4s ease;
+  }
+  nav.scrolled {
+    background: rgba(10,10,10,0.88);
+    backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+    padding: 1rem 3rem;
+  }
+  .nav-logo {
+    font-family: var(--serif); font-size: 1.4rem; font-weight: 500;
+    letter-spacing: 0.25em; color: var(--gold); text-decoration: none; transition: opacity 0.3s;
+  }
+  .nav-logo:hover { opacity: 0.8; }
+  .nav-logo span { color: var(--white); font-weight: 300; }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; align-items: center; }
+  .nav-links a {
+    color: var(--white); text-decoration: none; font-size: 0.78rem;
+    letter-spacing: 0.15em; text-transform: uppercase; font-weight: 400;
+    opacity: 0.7; transition: opacity 0.3s, color 0.3s; position: relative;
+  }
+  .nav-links a::after {
+    content: ''; position: absolute; bottom: -4px; left: 0; width: 0;
+    height: 1px; background: var(--gold); transition: width 0.3s ease;
+  }
+  .nav-links a:hover { opacity: 1; }
+  .nav-links a:hover::after { width: 100%; }
+  .nav-cta {
+    background: var(--gold) !important; color: var(--black) !important;
+    padding: 0.6rem 1.6rem; border-radius: 0;
+    font-weight: 500 !important; opacity: 1 !important;
+    transition: background 0.3s, transform 0.3s !important;
+  }
+  .nav-cta::after { display: none !important; }
+  .nav-cta:hover { background: var(--gold-light) !important; transform: translateY(-1px); }
+
+  .hero {
+    height: 100vh; min-height: 700px;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    text-align: center; position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 50% 40%, rgba(184,155,106,0.07) 0%, transparent 70%),
+      radial-gradient(circle at 15% 85%, rgba(184,155,106,0.03) 0%, transparent 50%),
+      radial-gradient(circle at 85% 15%, rgba(184,155,106,0.03) 0%, transparent 50%);
+  }
+  .hero-corner {
+    position: absolute; width: 80px; height: 80px;
+    border: 1px solid rgba(184,155,106,0.12); animation: fadeIn 1.5s ease-out 1.8s both;
+  }
+  .hero-corner--tl { top: 3rem; left: 3rem; border-right: none; border-bottom: none; }
+  .hero-corner--tr { top: 3rem; right: 3rem; border-left: none; border-bottom: none; }
+  .hero-corner--bl { bottom: 5rem; left: 3rem; border-right: none; border-top: none; }
+  .hero-corner--br { bottom: 5rem; right: 3rem; border-left: none; border-top: none; }
+  .hero-line {
+    width: 1px; height: 80px;
+    background: linear-gradient(to bottom, transparent, var(--gold));
+    margin-bottom: 2.5rem; animation: growLine 1.2s ease-out 0.3s both;
+  }
+  @keyframes growLine { from { height: 0; opacity: 0; } to { height: 80px; opacity: 1; } }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .hero-sub {
+    font-size: 0.72rem; letter-spacing: 0.45em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 1.5rem; font-weight: 400;
+    animation: fadeUp 0.8s ease-out 0.6s both;
+  }
+  .hero h1 {
+    font-family: var(--serif); font-size: clamp(3.5rem, 10vw, 8.5rem);
+    font-weight: 300; letter-spacing: 0.08em; line-height: 1;
+    margin-bottom: 0.3em; animation: fadeUp 0.8s ease-out 0.8s both;
+  }
+  .hero h1 .ampersand {
+    font-style: italic; color: var(--gold); font-weight: 300;
+    display: inline-block; margin: 0 0.05em;
+  }
+  .hero-tagline {
+    font-size: 1.05rem; font-weight: 300; color: var(--muted);
+    letter-spacing: 0.08em; margin-bottom: 3rem; animation: fadeUp 0.8s ease-out 1s both;
+  }
+  .hero-btn {
+    display: inline-block; padding: 1rem 3rem; border: 1px solid var(--gold);
+    color: var(--gold); text-decoration: none; font-size: 0.75rem;
+    letter-spacing: 0.25em; text-transform: uppercase; font-weight: 500;
+    transition: all 0.4s ease; animation: fadeUp 0.8s ease-out 1.2s both;
+    position: relative; overflow: hidden;
+  }
+  .hero-btn::before {
+    content: ''; position: absolute; inset: 0; background: var(--gold);
+    transform: scaleX(0); transform-origin: left; transition: transform 0.4s ease; z-index: -1;
+  }
+  .hero-btn:hover { color: var(--black); }
+  .hero-btn:hover::before { transform: scaleX(1); }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+  .scroll-indicator {
+    position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+    animation: fadeUp 0.8s ease-out 1.6s both;
+  }
+  .scroll-indicator span { font-size: 0.6rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--muted); }
+  .scroll-line { width: 1px; height: 30px; background: var(--gold); animation: scrollPulse 2s ease-in-out infinite; }
+  @keyframes scrollPulse { 0%, 100% { opacity: 0.3; transform: scaleY(0.5); } 50% { opacity: 1; transform: scaleY(1); } }
+
+  section { padding: 8rem 3rem; }
+  .section-label { font-size: 0.68rem; letter-spacing: 0.4em; text-transform: uppercase; color: var(--gold); margin-bottom: 1.5rem; }
+  .section-heading { font-family: var(--serif); font-size: clamp(2rem, 4.5vw, 3.5rem); font-weight: 300; line-height: 1.2; margin-bottom: 1.5rem; max-width: 600px; }
+
+  .credential-bar {
+    border-top: 1px solid rgba(184,155,106,0.1); border-bottom: 1px solid rgba(184,155,106,0.1);
+    padding: 2rem 3rem; display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap; align-items: center;
+  }
+  .credential { font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--muted); font-weight: 400; white-space: nowrap; display: flex; align-items: center; gap: 0.6rem; }
+  .credential .dot { width: 4px; height: 4px; border-radius: 50%; background: var(--gold); opacity: 0.5; }
+
+  .about { display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; max-width: 1200px; margin: 0 auto; align-items: center; }
+  .about-visual { position: relative; height: 520px; }
+  .about-visual .frame { position: absolute; inset: 20px; border: 1px solid var(--gold); opacity: 0.2; transition: opacity 0.5s; }
+  .about-visual:hover .frame { opacity: 0.35; }
+  .about-visual .block {
+    position: absolute; width: 100%; height: 100%;
+    background: linear-gradient(135deg, var(--charcoal) 0%, #1a1815 100%);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; overflow: hidden;
+  }
+  .about-visual .block::before {
+    content: ''; position: absolute; inset: 0;
+    background: repeating-linear-gradient(45deg, transparent, transparent 40px, rgba(184,155,106,0.015) 40px, rgba(184,155,106,0.015) 80px);
+  }
+  .about-visual .monogram { font-family: var(--serif); font-size: 7rem; font-weight: 300; color: var(--gold); opacity: 0.12; letter-spacing: 0.1em; line-height: 1; }
+  .about-visual .est { font-size: 0.65rem; letter-spacing: 0.4em; text-transform: uppercase; color: var(--gold); opacity: 0.2; }
+  .about-text p { color: var(--muted); line-height: 1.85; font-weight: 300; font-size: 0.95rem; margin-bottom: 1.5rem; }
+  .about-detail { display: flex; gap: 3rem; margin-top: 2.5rem; padding-top: 2.5rem; border-top: 1px solid rgba(184,155,106,0.15); }
+  .about-detail div h4 { font-family: var(--serif); font-size: 2.2rem; font-weight: 300; color: var(--gold); }
+  .about-detail div span { font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); }
+
+  .services-section { background: linear-gradient(180deg, var(--black) 0%, #0f0e0c 50%, var(--black) 100%); }
+  .services-header { text-align: center; max-width: 600px; margin: 0 auto 4rem; }
+  .services-header p { color: var(--muted); font-weight: 300; line-height: 1.7; }
+  .services-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; max-width: 1200px; margin: 0 auto; }
+  .service-card {
+    padding: 3rem 2.2rem; background: rgba(255,255,255,0.015);
+    border: 1px solid rgba(184,155,106,0.08); transition: all 0.5s ease;
+    position: relative; overflow: hidden;
+  }
+  .service-card::before {
+    content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    transform: scaleX(0); transform-origin: left; transition: transform 0.5s ease;
+  }
+  .service-card:hover::before { transform: scaleX(1); }
+  .service-card:hover { background: rgba(184,155,106,0.04); }
+  .service-icon { font-size: 1.4rem; margin-bottom: 1.5rem; display: block; color: var(--gold); opacity: 0.6; }
+  .service-card h3 { font-family: var(--serif); font-size: 1.35rem; font-weight: 400; margin-bottom: 0.8rem; }
+  .service-card p { color: var(--muted); font-size: 0.85rem; line-height: 1.7; font-weight: 300; }
+
+  .testimonials { max-width: 900px; margin: 0 auto; text-align: center; }
+  .testimonial-quote {
+    font-family: var(--serif); font-size: clamp(1.3rem, 2.5vw, 1.8rem); font-weight: 300;
+    line-height: 1.7; font-style: italic; color: var(--cream); margin: 3rem auto 2rem;
+    max-width: 750px; position: relative;
+  }
+  .testimonial-quote::before {
+    content: '\201C'; font-size: 6rem; color: var(--gold); opacity: 0.2;
+    position: absolute; top: -2.5rem; left: 50%; transform: translateX(-50%);
+    font-style: normal; line-height: 1;
+  }
+  .testimonial-cards { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; text-align: left; margin-top: 4rem; }
+  .testimonial-card { padding: 2rem; border-left: 2px solid var(--gold); background: rgba(255,255,255,0.02); transition: background 0.4s; }
+  .testimonial-card:hover { background: rgba(255,255,255,0.035); }
+  .testimonial-card p { font-size: 0.88rem; line-height: 1.7; color: var(--muted); font-weight: 300; font-style: italic; }
+  .testimonial-card .stars { color: var(--gold); margin-top: 1rem; font-size: 0.75rem; letter-spacing: 3px; }
+  .testimonial-card .reviewer { font-size: 0.7rem; letter-spacing: 0.1em; color: var(--muted); margin-top: 0.6rem; text-transform: uppercase; opacity: 0.6; }
+
+  .info-section { display: grid; grid-template-columns: 1fr 1px 1fr; gap: 4rem; max-width: 1000px; margin: 0 auto; align-items: start; }
+  .info-divider { background: linear-gradient(to bottom, transparent, var(--gold), transparent); height: 100%; opacity: 0.25; }
+  .hours-list { list-style: none; margin-top: 2rem; }
+  .hours-list li {
+    display: flex; justify-content: space-between; padding: 0.85rem 0;
+    border-bottom: 1px solid rgba(184,155,106,0.08); font-size: 0.9rem; font-weight: 300;
+    transition: padding-left 0.3s;
+  }
+  .hours-list li:hover { padding-left: 0.3rem; }
+  .hours-list li .day { color: var(--white); }
+  .hours-list li .time { color: var(--gold); }
+  .hours-list li.today { background: rgba(184,155,106,0.04); padding-left: 0.8rem; padding-right: 0.5rem; border-radius: 2px; }
+  .hours-list li.today .day::after { content: ' · today'; font-size: 0.65rem; color: var(--gold); letter-spacing: 0.1em; text-transform: uppercase; }
+  .location-info { margin-top: 2rem; }
+  .location-info .address { font-family: var(--serif); font-size: 1.3rem; font-weight: 400; line-height: 1.6; margin-bottom: 1rem; }
+  .location-info .contact-links { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 2rem; }
+  .location-info .contact-link {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    color: var(--gold); font-size: 1rem; text-decoration: none; font-weight: 400; transition: color 0.3s;
+  }
+  .location-info .contact-link:hover { color: var(--gold-light); }
+  .location-info .contact-link svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .map-embed {
+    width: 100%; height: 220px; border: 1px solid rgba(184,155,106,0.12);
+    filter: grayscale(0.85) contrast(1.1) brightness(0.9); transition: filter 0.5s;
+  }
+  .map-embed:hover { filter: grayscale(0.5) contrast(1.05) brightness(0.95); }
+
+  .cta-section { text-align: center; padding: 8rem 3rem; position: relative; }
+  .cta-section::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse 50% 60% at 50% 50%, rgba(184,155,106,0.06) 0%, transparent 70%);
+  }
+  .cta-section h2 { font-family: var(--serif); font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 300; margin-bottom: 1rem; position: relative; }
+  .cta-section p { color: var(--muted); font-weight: 300; margin-bottom: 2.5rem; position: relative; }
+  .cta-buttons { display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; position: relative; }
+  .cta-btn {
+    display: inline-block; padding: 1.1rem 3.5rem; background: var(--gold);
+    color: var(--black); text-decoration: none; font-size: 0.75rem;
+    letter-spacing: 0.25em; text-transform: uppercase; font-weight: 600;
+    transition: all 0.4s ease; position: relative;
+  }
+  .cta-btn:hover { background: var(--gold-light); transform: translateY(-2px); }
+  .cta-btn--outline { background: transparent; color: var(--gold); border: 1px solid rgba(184,155,106,0.4); }
+  .cta-btn--outline:hover { background: rgba(184,155,106,0.08); border-color: var(--gold); transform: translateY(-2px); }
+
+  footer { padding: 3rem; border-top: 1px solid rgba(184,155,106,0.1); max-width: 1200px; margin: 0 auto; }
+  .footer-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+  .footer-logo { font-family: var(--serif); font-size: 1rem; letter-spacing: 0.2em; color: var(--gold); }
+  .footer-social { display: flex; gap: 1.5rem; align-items: center; }
+  .footer-social a { color: var(--muted); text-decoration: none; transition: color 0.3s; display: flex; align-items: center; }
+  .footer-social a:hover { color: var(--gold); }
+  .footer-social svg { width: 18px; height: 18px; fill: currentColor; }
+  .footer-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 1.5rem; border-top: 1px solid rgba(184,155,106,0.06); }
+  .footer-copy { font-size: 0.72rem; color: var(--muted); font-weight: 300; letter-spacing: 0.05em; }
+  .footer-address { font-size: 0.72rem; color: var(--muted); font-weight: 300; letter-spacing: 0.05em; }
+
+  .nav-toggle { display: none; cursor: pointer; flex-direction: column; gap: 5px; z-index: 101; }
+  .nav-toggle span { display: block; width: 24px; height: 1px; background: var(--white); transition: all 0.3s; }
+
+  .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 1024px) { .services-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 900px) {
+    nav { padding: 1.2rem 1.5rem; } nav.scrolled { padding: 1rem 1.5rem; }
+    .nav-links { display: none; flex-direction: column; position: absolute; top: 100%; left: 0; right: 0; background: rgba(10,10,10,0.97); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 2rem 1.5rem; gap: 1.5rem; border-bottom: 1px solid rgba(184,155,106,0.1); }
+    .nav-links.open { display: flex; } .nav-links a::after { display: none; } .nav-toggle { display: flex; }
+    section { padding: 5rem 1.5rem; } .about { grid-template-columns: 1fr; gap: 3rem; } .about-visual { height: 300px; }
+    .services-grid { grid-template-columns: 1fr; } .testimonial-cards { grid-template-columns: 1fr; }
+    .info-section { grid-template-columns: 1fr; gap: 3rem; } .info-divider { display: none; } .hero-corner { display: none; }
+    .credential-bar { gap: 1.5rem; padding: 1.5rem; } .credential { font-size: 0.6rem; }
+    .footer-top, .footer-bottom { flex-direction: column; gap: 1rem; text-align: center; }
+  }
+  @media (max-width: 480px) { .hero h1 { letter-spacing: 0.04em; } .cta-buttons { flex-direction: column; align-items: center; } .cta-btn { width: 100%; max-width: 300px; text-align: center; } }
+</style>
+</head>
+<body>
+
+<nav id="navbar">
+  <a href="#" class="nav-logo">JAX <span>&</span> KING</a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#about">About</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#reviews">Reviews</a></li>
+    <li><a href="#visit">Visit</a></li>
+    <li><a href="tel:+18584595464" class="nav-cta">Book Now</a></li>
+  </ul>
+  <div class="nav-toggle" id="navToggle"><span></span><span></span><span></span></div>
+</nav>
+
+<section class="hero" id="home">
+  <div class="hero-corner hero-corner--tl"></div>
+  <div class="hero-corner hero-corner--tr"></div>
+  <div class="hero-corner hero-corner--bl"></div>
+  <div class="hero-corner hero-corner--br"></div>
+  <div class="hero-line"></div>
+  <div class="hero-sub">La Jolla's Award-Winning Salon</div>
+  <h1>JAX <span class="ampersand">&</span> KING</h1>
+  <p class="hero-tagline">Elevated hair artistry in a La Jolla beach bungalow</p>
+  <a href="tel:+18584595464" class="hero-btn">Book Your Appointment</a>
+  <div class="scroll-indicator"><span>Scroll</span><div class="scroll-line"></div></div>
+</section>
+
+<div class="credential-bar">
+  <div class="credential">Award Winning</div>
+  <div class="credential"><span class="dot"></span></div>
+  <div class="credential">As Seen on E!</div>
+  <div class="credential"><span class="dot"></span></div>
+  <div class="credential">L'Oréal Professionnel Artists</div>
+  <div class="credential"><span class="dot"></span></div>
+  <div class="credential">5★ Rated</div>
+  <div class="credential"><span class="dot"></span></div>
+  <div class="credential">160+ Reviews</div>
+</div>
+
+<section id="about">
+  <div class="about">
+    <div class="about-visual reveal">
+      <div class="block"><div class="monogram">J&K</div><div class="est">La Jolla, California</div></div>
+      <div class="frame"></div>
+    </div>
+    <div class="about-text reveal">
+      <div class="section-label">The Studio</div>
+      <h2 class="section-heading">A fresh approach to the salon experience</h2>
+      <p>JAX & KING is an intimate, design-forward salon set inside a charming La Jolla beach bungalow on Herschel Avenue. The space draws on the alchemy of vintage apothecaries and the warmth of a boutique hotel — a place where artistry meets atmosphere.</p>
+      <p>Founded by Jaylin Seng and Paul Miller, the studio has assembled a diverse team of industry experts who deliver customized color, precision cuts, and editorial-level styling. Every service is built around you — your features, your lifestyle, your vision.</p>
+      <div class="about-detail">
+        <div><h4>10K+</h4><span>Instagram Followers</span></div>
+        <div><h4>163</h4><span>Yelp Reviews</span></div>
+        <div><h4>La Jolla</h4><span>Herschel Ave</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="services" class="services-section">
+  <div class="services-header reveal">
+    <div class="section-label">Services</div>
+    <h2 class="section-heading" style="margin-left:auto;margin-right:auto;">Tailored to you, every time</h2>
+    <p>Every service begins with a personal consultation. The team crafts each look to complement your unique features, lifestyle, and personal style.</p>
+  </div>
+  <div class="services-grid">
+    <div class="service-card reveal"><span class="service-icon">✂</span><h3>Precision Cuts</h3><p>Award-winning cuts shaped to your face and lifestyle — from modern bobs to textured layers, for all styles and lengths.</p></div>
+    <div class="service-card reveal"><span class="service-icon">◎</span><h3>Color & Balayage</h3><p>Customized colour is at the heart of JAX & KING. Hollywood highlights, balayage, ombré, sombré — all with custom-mixed formulas for rich, lasting results.</p></div>
+    <div class="service-card reveal"><span class="service-icon">❖</span><h3>Extensions</h3><p>Premium hair extensions for added volume, length, or both. Seamlessly blended and personalized for a natural, elevated look.</p></div>
+    <div class="service-card reveal"><span class="service-icon">⬡</span><h3>Styling & Finish</h3><p>Event-ready styles, editorial blowouts, and seasonal trend forecasting. Parisian-inspired finishing for every occasion.</p></div>
+  </div>
+</section>
+
+<section id="reviews">
+  <div class="testimonials">
+    <div class="section-label reveal">What Clients Say</div>
+    <h2 class="section-heading reveal" style="margin-left:auto;margin-right:auto;">Consistently exceptional</h2>
+    <div class="testimonial-quote reveal">You deserve style and luxury, no matter where you live. At Jax & King, every visit is a transformative experience — not just a haircut.</div>
+    <div class="testimonial-cards">
+      <div class="testimonial-card reveal"><p>"For those who settle for nothing less than perfection, JAX & KING is the ultimate find. You leave not just looking your best, but feeling completely transformed."</p><div class="stars">★ ★ ★ ★ ★</div><div class="reviewer">Via Yelp</div></div>
+      <div class="testimonial-card reveal"><p>"I just let Jaylin do whatever he wants as he truly knows what I would like — even when I didn't realize it! The color is just amazing."</p><div class="stars">★ ★ ★ ★ ★</div><div class="reviewer">Via Yelp</div></div>
+      <div class="testimonial-card reveal"><p>"Jay saved my hair from a bad job done at another salon. The whole experience — the space, the attention to detail, the results — is unlike anywhere else."</p><div class="stars">★ ★ ★ ★ ★</div><div class="reviewer">Via Yelp</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="visit">
+  <div class="info-section">
+    <div>
+      <div class="section-label reveal">Hours</div>
+      <h2 class="section-heading reveal">When to visit</h2>
+      <ul class="hours-list reveal" id="hoursList">
+        <li data-day="1"><span class="day">Monday</span><span class="time">9:00 AM – 8:00 PM</span></li>
+        <li data-day="2"><span class="day">Tuesday</span><span class="time">9:00 AM – 8:00 PM</span></li>
+        <li data-day="3"><span class="day">Wednesday</span><span class="time">9:00 AM – 8:00 PM</span></li>
+        <li data-day="4"><span class="day">Thursday</span><span class="time">9:00 AM – 8:00 PM</span></li>
+        <li data-day="5"><span class="day">Friday</span><span class="time">9:00 AM – 8:00 PM</span></li>
+        <li data-day="6"><span class="day">Saturday</span><span class="time">8:00 AM – 7:00 PM</span></li>
+        <li data-day="0"><span class="day">Sunday</span><span class="time">11:00 AM – 5:00 PM</span></li>
+      </ul>
+    </div>
+    <div class="info-divider"></div>
+    <div>
+      <div class="section-label reveal">Location</div>
+      <h2 class="section-heading reveal">Find us</h2>
+      <div class="location-info reveal">
+        <div class="address">7861 Herschel Avenue<br>La Jolla, CA 92037</div>
+        <div class="contact-links">
+          <a href="tel:+18584595464" class="contact-link"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>(858) 459-5464</a>
+          <a href="mailto:jaxandking@gmail.com" class="contact-link"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>jaxandking@gmail.com</a>
+          <a href="https://www.instagram.com/jaxandking/" target="_blank" rel="noopener" class="contact-link"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>@jaxandking</a>
+        </div>
+        <iframe class="map-embed" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3351.5!2d-117.2728553!3d32.846625!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80dc03e6116fff4d%3A0xc6554926a9298e61!2sJAX%20%26%20KING!5e0!3m2!1sen!2sus!4v1" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-section">
+  <div class="section-label reveal">Ready?</div>
+  <h2 class="reveal">Your best hair starts here</h2>
+  <p class="reveal">Book your appointment with the JAX & KING team</p>
+  <div class="cta-buttons reveal">
+    <a href="tel:+18584595464" class="cta-btn">Call to Book</a>
+    <a href="mailto:jaxandking@gmail.com" class="cta-btn cta-btn--outline">Email Us</a>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-top">
+    <div class="footer-logo">JAX & KING</div>
+    <div class="footer-social">
+      <a href="https://www.instagram.com/jaxandking/" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></a>
+      <a href="https://www.facebook.com/jaxandking/" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
+      <a href="https://www.yelp.com/biz/jax-and-king-la-jolla" target="_blank" rel="noopener" aria-label="Yelp"><svg viewBox="0 0 24 24"><path d="M20.16 12.594l-4.995 1.433c-.96.276-1.74-.8-1.176-1.63l2.905-4.308a1.072 1.072 0 011.596-.206 7.26 7.26 0 011.96 3.105c.262.79-.37 1.46-1.06 1.606h-.23zm-3.87 5.04l-1.803-4.835c-.392-.96.616-1.812 1.51-1.282l4.455 2.632a1.073 1.073 0 01.264 1.604 7.247 7.247 0 01-2.874 2.136c-.79.33-1.572-.003-1.79-.654l.238.4zm-4.032.86l.24-5.18c.047-1.01 1.28-1.39 1.856-.57l3.034 4.327a1.072 1.072 0 01-.498 1.587 7.2 7.2 0 01-3.54.454c-.843-.09-1.197-.79-1.092-1.618zm-2.56-3.143L4.93 17.33a1.072 1.072 0 01-1.476-.72 7.2 7.2 0 01.164-3.574c.29-.8 1.05-1.04 1.754-.72l4.508 2.06c.92.42.86 1.7-.002 1.976zm-.8-4.836L4.2 8.392a1.072 1.072 0 01-.09-1.622 7.242 7.242 0 013.218-1.727c.848-.18 1.47.37 1.494 1.07l.122 5.14c.03 1.01-1.188 1.47-1.866.662z"/></svg></a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2026 JAX & KING · All rights reserved</div>
+    <div class="footer-address">7861 Herschel Avenue · La Jolla, CA 92037</div>
+  </div>
+</footer>
+
+<script>
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => { navbar.classList.toggle('scrolled', window.scrollY > 50); }, { passive: true });
+  const navToggle = document.getElementById('navToggle');
+  const navLinks = document.getElementById('navLinks');
+  navToggle.addEventListener('click', () => { navLinks.classList.toggle('open'); });
+  navLinks.querySelectorAll('a').forEach(link => { link.addEventListener('click', () => navLinks.classList.remove('open')); });
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        const siblings = entry.target.parentElement.querySelectorAll('.reveal');
+        const i = Array.from(siblings).indexOf(entry.target);
+        entry.target.style.transitionDelay = `${i * 0.1}s`;
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+  const today = new Date().getDay();
+  const todayRow = document.querySelector(`#hoursList li[data-day="${today}"]`);
+  if (todayRow) todayRow.classList.add('today');
+</script>
+</body>
+</html>
