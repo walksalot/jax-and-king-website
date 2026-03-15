@@ -32,6 +32,7 @@
     overflow-x: hidden;
   }
 
+  /* Film grain */
   body::after {
     content: '';
     position: fixed;
@@ -44,6 +45,15 @@
     background-size: 200px;
   }
 
+  /* ─── SCROLL PROGRESS ─── */
+  .scroll-progress {
+    position: fixed; top: 0; left: 0; height: 2px; z-index: 200;
+    background: linear-gradient(90deg, var(--gold-dark), var(--gold), var(--gold-light));
+    width: 0%; transition: none;
+    box-shadow: 0 0 8px rgba(184,155,106,0.4);
+  }
+
+  /* ─── NAV ─── */
   nav {
     position: fixed; top: 0; width: 100%; z-index: 100;
     padding: 1.5rem 3rem;
@@ -82,6 +92,20 @@
   .nav-cta::after { display: none !important; }
   .nav-cta:hover { background: var(--gold-light) !important; transform: translateY(-1px); }
 
+  /* Animated hamburger */
+  .nav-toggle { display: none; cursor: pointer; width: 28px; height: 20px; position: relative; z-index: 101; }
+  .nav-toggle span {
+    display: block; width: 24px; height: 1px; background: var(--white);
+    position: absolute; left: 2px; transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+  }
+  .nav-toggle span:nth-child(1) { top: 2px; }
+  .nav-toggle span:nth-child(2) { top: 9px; }
+  .nav-toggle span:nth-child(3) { top: 16px; }
+  .nav-toggle.open span:nth-child(1) { top: 9px; transform: rotate(45deg); }
+  .nav-toggle.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+  .nav-toggle.open span:nth-child(3) { top: 9px; transform: rotate(-45deg); }
+
+  /* ─── HERO ─── */
   .hero {
     height: 100vh; min-height: 700px;
     display: flex; flex-direction: column; justify-content: center; align-items: center;
@@ -102,6 +126,7 @@
   .hero-corner--tr { top: 3rem; right: 3rem; border-left: none; border-bottom: none; }
   .hero-corner--bl { bottom: 5rem; left: 3rem; border-right: none; border-top: none; }
   .hero-corner--br { bottom: 5rem; right: 3rem; border-left: none; border-top: none; }
+
   .hero-line {
     width: 1px; height: 80px;
     background: linear-gradient(to bottom, transparent, var(--gold));
@@ -109,6 +134,7 @@
   }
   @keyframes growLine { from { height: 0; opacity: 0; } to { height: 80px; opacity: 1; } }
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
   .hero-sub {
     font-size: 0.72rem; letter-spacing: 0.45em; text-transform: uppercase;
     color: var(--gold); margin-bottom: 1.5rem; font-weight: 400;
@@ -122,6 +148,15 @@
   .hero h1 .ampersand {
     font-style: italic; color: var(--gold); font-weight: 300;
     display: inline-block; margin: 0 0.05em;
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold), var(--gold-light), var(--gold));
+    background-size: 300% 300%;
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: fadeUp 0.8s ease-out 0.8s both, shimmer 6s ease-in-out infinite 2s;
+  }
+  @keyframes shimmer {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
   }
   .hero-tagline {
     font-size: 1.05rem; font-weight: 300; color: var(--muted);
@@ -140,7 +175,9 @@
   }
   .hero-btn:hover { color: var(--black); }
   .hero-btn:hover::before { transform: scaleX(1); }
+
   @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+
   .scroll-indicator {
     position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
     display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
@@ -150,10 +187,47 @@
   .scroll-line { width: 1px; height: 30px; background: var(--gold); animation: scrollPulse 2s ease-in-out infinite; }
   @keyframes scrollPulse { 0%, 100% { opacity: 0.3; transform: scaleY(0.5); } 50% { opacity: 1; transform: scaleY(1); } }
 
-  section { padding: 8rem 3rem; }
-  .section-label { font-size: 0.68rem; letter-spacing: 0.4em; text-transform: uppercase; color: var(--gold); margin-bottom: 1.5rem; }
-  .section-heading { font-family: var(--serif); font-size: clamp(2rem, 4.5vw, 3.5rem); font-weight: 300; line-height: 1.2; margin-bottom: 1.5rem; max-width: 600px; }
+  /* Ambient floating particles */
+  .hero-particles { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+  .particle {
+    position: absolute; width: 2px; height: 2px; border-radius: 50%;
+    background: var(--gold); opacity: 0;
+    animation: float linear infinite;
+  }
+  @keyframes float {
+    0% { opacity: 0; transform: translateY(100vh) scale(0); }
+    10% { opacity: 0.15; }
+    90% { opacity: 0.15; }
+    100% { opacity: 0; transform: translateY(-20vh) scale(1); }
+  }
 
+  /* ─── SECTIONS COMMON ─── */
+  section { padding: 8rem 3rem; }
+
+  .section-label {
+    font-size: 0.68rem; letter-spacing: 0.4em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 1.5rem;
+    display: flex; align-items: center; gap: 1.2rem;
+  }
+  .section-label::before {
+    content: ''; width: 28px; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold));
+  }
+  /* Center-aligned labels (services, reviews) */
+  .section-label--center {
+    justify-content: center;
+  }
+  .section-label--center::after {
+    content: ''; width: 28px; height: 1px;
+    background: linear-gradient(90deg, var(--gold), transparent);
+  }
+
+  .section-heading {
+    font-family: var(--serif); font-size: clamp(2rem, 4.5vw, 3.5rem);
+    font-weight: 300; line-height: 1.2; margin-bottom: 1.5rem; max-width: 600px;
+  }
+
+  /* ─── CREDENTIAL BAR ─── */
   .credential-bar {
     border-top: 1px solid rgba(184,155,106,0.1); border-bottom: 1px solid rgba(184,155,106,0.1);
     padding: 2rem 3rem; display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap; align-items: center;
@@ -161,10 +235,11 @@
   .credential { font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--muted); font-weight: 400; white-space: nowrap; display: flex; align-items: center; gap: 0.6rem; }
   .credential .dot { width: 4px; height: 4px; border-radius: 50%; background: var(--gold); opacity: 0.5; }
 
+  /* ─── ABOUT ─── */
   .about { display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; max-width: 1200px; margin: 0 auto; align-items: center; }
   .about-visual { position: relative; height: 520px; }
-  .about-visual .frame { position: absolute; inset: 20px; border: 1px solid var(--gold); opacity: 0.2; transition: opacity 0.5s; }
-  .about-visual:hover .frame { opacity: 0.35; }
+  .about-visual .frame { position: absolute; inset: 20px; border: 1px solid var(--gold); opacity: 0.2; transition: all 0.6s ease; }
+  .about-visual:hover .frame { opacity: 0.35; inset: 16px; }
   .about-visual .block {
     position: absolute; width: 100%; height: 100%;
     background: linear-gradient(135deg, var(--charcoal) 0%, #1a1815 100%);
@@ -178,9 +253,14 @@
   .about-visual .est { font-size: 0.65rem; letter-spacing: 0.4em; text-transform: uppercase; color: var(--gold); opacity: 0.2; }
   .about-text p { color: var(--muted); line-height: 1.85; font-weight: 300; font-size: 0.95rem; margin-bottom: 1.5rem; }
   .about-detail { display: flex; gap: 3rem; margin-top: 2.5rem; padding-top: 2.5rem; border-top: 1px solid rgba(184,155,106,0.15); }
-  .about-detail div h4 { font-family: var(--serif); font-size: 2.2rem; font-weight: 300; color: var(--gold); }
+  .about-detail div h4 {
+    font-family: var(--serif); font-size: 2.2rem; font-weight: 300; color: var(--gold);
+    transition: transform 0.4s ease;
+  }
+  .about-detail div:hover h4 { transform: translateY(-2px); }
   .about-detail div span { font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); }
 
+  /* ─── SERVICES ─── */
   .services-section { background: linear-gradient(180deg, var(--black) 0%, #0f0e0c 50%, var(--black) 100%); }
   .services-header { text-align: center; max-width: 600px; margin: 0 auto 4rem; }
   .services-header p { color: var(--muted); font-weight: 300; line-height: 1.7; }
@@ -197,10 +277,15 @@
   }
   .service-card:hover::before { transform: scaleX(1); }
   .service-card:hover { background: rgba(184,155,106,0.04); }
-  .service-icon { font-size: 1.4rem; margin-bottom: 1.5rem; display: block; color: var(--gold); opacity: 0.6; }
+  .service-icon {
+    width: 32px; height: 32px; margin-bottom: 1.5rem; display: block;
+    color: var(--gold); opacity: 0.5; transition: opacity 0.4s;
+  }
+  .service-card:hover .service-icon { opacity: 0.8; }
   .service-card h3 { font-family: var(--serif); font-size: 1.35rem; font-weight: 400; margin-bottom: 0.8rem; }
   .service-card p { color: var(--muted); font-size: 0.85rem; line-height: 1.7; font-weight: 300; }
 
+  /* ─── TESTIMONIALS ─── */
   .testimonials { max-width: 900px; margin: 0 auto; text-align: center; }
   .testimonial-quote {
     font-family: var(--serif); font-size: clamp(1.3rem, 2.5vw, 1.8rem); font-weight: 300;
@@ -213,40 +298,66 @@
     font-style: normal; line-height: 1;
   }
   .testimonial-cards { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; text-align: left; margin-top: 4rem; }
-  .testimonial-card { padding: 2rem; border-left: 2px solid var(--gold); background: rgba(255,255,255,0.02); transition: background 0.4s; }
-  .testimonial-card:hover { background: rgba(255,255,255,0.035); }
+  .testimonial-card {
+    padding: 2rem; border-left: 2px solid rgba(184,155,106,0.3);
+    background: rgba(255,255,255,0.02); transition: all 0.4s ease;
+  }
+  .testimonial-card:hover { background: rgba(255,255,255,0.035); border-left-color: var(--gold); }
   .testimonial-card p { font-size: 0.88rem; line-height: 1.7; color: var(--muted); font-weight: 300; font-style: italic; }
   .testimonial-card .stars { color: var(--gold); margin-top: 1rem; font-size: 0.75rem; letter-spacing: 3px; }
   .testimonial-card .reviewer { font-size: 0.7rem; letter-spacing: 0.1em; color: var(--muted); margin-top: 0.6rem; text-transform: uppercase; opacity: 0.6; }
 
+  /* ─── HOURS / LOCATION ─── */
   .info-section { display: grid; grid-template-columns: 1fr 1px 1fr; gap: 4rem; max-width: 1000px; margin: 0 auto; align-items: start; }
   .info-divider { background: linear-gradient(to bottom, transparent, var(--gold), transparent); height: 100%; opacity: 0.25; }
   .hours-list { list-style: none; margin-top: 2rem; }
   .hours-list li {
     display: flex; justify-content: space-between; padding: 0.85rem 0;
     border-bottom: 1px solid rgba(184,155,106,0.08); font-size: 0.9rem; font-weight: 300;
-    transition: padding-left 0.3s;
+    transition: padding-left 0.3s, background 0.3s;
   }
   .hours-list li:hover { padding-left: 0.3rem; }
   .hours-list li .day { color: var(--white); }
   .hours-list li .time { color: var(--gold); }
   .hours-list li.today { background: rgba(184,155,106,0.04); padding-left: 0.8rem; padding-right: 0.5rem; border-radius: 2px; }
   .hours-list li.today .day::after { content: ' · today'; font-size: 0.65rem; color: var(--gold); letter-spacing: 0.1em; text-transform: uppercase; }
+
+  .open-status {
+    display: inline-flex; align-items: center; gap: 0.5rem; margin-top: 1.5rem;
+    font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 400;
+  }
+  .open-status .pulse {
+    width: 6px; height: 6px; border-radius: 50;
+    position: relative;
+  }
+  .open-status .pulse::after {
+    content: ''; position: absolute; inset: -3px; border-radius: 50%;
+    animation: statusPulse 2s ease-in-out infinite;
+  }
+  .open-status.is-open { color: #6db86d; }
+  .open-status.is-open .pulse { background: #6db86d; }
+  .open-status.is-open .pulse::after { border: 1px solid #6db86d; }
+  .open-status.is-closed { color: var(--muted); }
+  .open-status.is-closed .pulse { background: var(--muted); }
+  .open-status.is-closed .pulse::after { border: 1px solid var(--muted); }
+  @keyframes statusPulse { 0%, 100% { opacity: 0.6; transform: scale(1); } 50% { opacity: 0; transform: scale(1.8); } }
+
   .location-info { margin-top: 2rem; }
   .location-info .address { font-family: var(--serif); font-size: 1.3rem; font-weight: 400; line-height: 1.6; margin-bottom: 1rem; }
   .location-info .contact-links { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 2rem; }
   .location-info .contact-link {
     display: inline-flex; align-items: center; gap: 0.5rem;
-    color: var(--gold); font-size: 1rem; text-decoration: none; font-weight: 400; transition: color 0.3s;
+    color: var(--gold); font-size: 1rem; text-decoration: none; font-weight: 400; transition: color 0.3s, gap 0.3s;
   }
-  .location-info .contact-link:hover { color: var(--gold-light); }
-  .location-info .contact-link svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .location-info .contact-link:hover { color: var(--gold-light); gap: 0.7rem; }
+  .location-info .contact-link svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
   .map-embed {
     width: 100%; height: 220px; border: 1px solid rgba(184,155,106,0.12);
     filter: grayscale(0.85) contrast(1.1) brightness(0.9); transition: filter 0.5s;
   }
   .map-embed:hover { filter: grayscale(0.5) contrast(1.05) brightness(0.95); }
 
+  /* ─── CTA ─── */
   .cta-section { text-align: center; padding: 8rem 3rem; position: relative; }
   .cta-section::before {
     content: ''; position: absolute; inset: 0;
@@ -261,27 +372,27 @@
     letter-spacing: 0.25em; text-transform: uppercase; font-weight: 600;
     transition: all 0.4s ease; position: relative;
   }
-  .cta-btn:hover { background: var(--gold-light); transform: translateY(-2px); }
+  .cta-btn:hover { background: var(--gold-light); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(184,155,106,0.15); }
   .cta-btn--outline { background: transparent; color: var(--gold); border: 1px solid rgba(184,155,106,0.4); }
-  .cta-btn--outline:hover { background: rgba(184,155,106,0.08); border-color: var(--gold); transform: translateY(-2px); }
+  .cta-btn--outline:hover { background: rgba(184,155,106,0.08); border-color: var(--gold); transform: translateY(-2px); box-shadow: none; }
 
+  /* ─── FOOTER ─── */
   footer { padding: 3rem; border-top: 1px solid rgba(184,155,106,0.1); max-width: 1200px; margin: 0 auto; }
   .footer-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
   .footer-logo { font-family: var(--serif); font-size: 1rem; letter-spacing: 0.2em; color: var(--gold); }
   .footer-social { display: flex; gap: 1.5rem; align-items: center; }
-  .footer-social a { color: var(--muted); text-decoration: none; transition: color 0.3s; display: flex; align-items: center; }
-  .footer-social a:hover { color: var(--gold); }
+  .footer-social a { color: var(--muted); text-decoration: none; transition: color 0.3s, transform 0.3s; display: flex; align-items: center; }
+  .footer-social a:hover { color: var(--gold); transform: translateY(-1px); }
   .footer-social svg { width: 18px; height: 18px; fill: currentColor; }
   .footer-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 1.5rem; border-top: 1px solid rgba(184,155,106,0.06); }
   .footer-copy { font-size: 0.72rem; color: var(--muted); font-weight: 300; letter-spacing: 0.05em; }
   .footer-address { font-size: 0.72rem; color: var(--muted); font-weight: 300; letter-spacing: 0.05em; }
 
-  .nav-toggle { display: none; cursor: pointer; flex-direction: column; gap: 5px; z-index: 101; }
-  .nav-toggle span { display: block; width: 24px; height: 1px; background: var(--white); transition: all 0.3s; }
-
+  /* ─── SCROLL REVEAL ─── */
   .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
   .reveal.visible { opacity: 1; transform: translateY(0); }
 
+  /* ─── RESPONSIVE ─── */
   @media (max-width: 1024px) { .services-grid { grid-template-columns: repeat(2, 1fr); } }
   @media (max-width: 900px) {
     nav { padding: 1.2rem 1.5rem; } nav.scrolled { padding: 1rem 1.5rem; }
@@ -292,12 +403,18 @@
     .info-section { grid-template-columns: 1fr; gap: 3rem; } .info-divider { display: none; } .hero-corner { display: none; }
     .credential-bar { gap: 1.5rem; padding: 1.5rem; } .credential { font-size: 0.6rem; }
     .footer-top, .footer-bottom { flex-direction: column; gap: 1rem; text-align: center; }
+    .section-label::before { width: 16px; }
+    .section-label--center::after { width: 16px; }
   }
   @media (max-width: 480px) { .hero h1 { letter-spacing: 0.04em; } .cta-buttons { flex-direction: column; align-items: center; } .cta-btn { width: 100%; max-width: 300px; text-align: center; } }
 </style>
 </head>
 <body>
 
+<!-- Scroll Progress -->
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- NAV -->
 <nav id="navbar">
   <a href="#" class="nav-logo">JAX <span>&</span> KING</a>
   <ul class="nav-links" id="navLinks">
@@ -310,7 +427,9 @@
   <div class="nav-toggle" id="navToggle"><span></span><span></span><span></span></div>
 </nav>
 
+<!-- HERO -->
 <section class="hero" id="home">
+  <div class="hero-particles" id="heroParticles"></div>
   <div class="hero-corner hero-corner--tl"></div>
   <div class="hero-corner hero-corner--tr"></div>
   <div class="hero-corner hero-corner--bl"></div>
@@ -323,6 +442,7 @@
   <div class="scroll-indicator"><span>Scroll</span><div class="scroll-line"></div></div>
 </section>
 
+<!-- CREDENTIALS -->
 <div class="credential-bar">
   <div class="credential">Award Winning</div>
   <div class="credential"><span class="dot"></span></div>
@@ -335,6 +455,7 @@
   <div class="credential">160+ Reviews</div>
 </div>
 
+<!-- ABOUT -->
 <section id="about">
   <div class="about">
     <div class="about-visual reveal">
@@ -347,31 +468,49 @@
       <p>JAX & KING is an intimate, design-forward salon set inside a charming La Jolla beach bungalow on Herschel Avenue. The space draws on the alchemy of vintage apothecaries and the warmth of a boutique hotel — a place where artistry meets atmosphere.</p>
       <p>Founded by Jaylin Seng and Paul Miller, the studio has assembled a diverse team of industry experts who deliver customized color, precision cuts, and editorial-level styling. Every service is built around you — your features, your lifestyle, your vision.</p>
       <div class="about-detail">
-        <div><h4>10K+</h4><span>Instagram Followers</span></div>
-        <div><h4>163</h4><span>Yelp Reviews</span></div>
+        <div><h4 class="counter" data-target="10" data-suffix="K+">0</h4><span>Instagram Followers</span></div>
+        <div><h4 class="counter" data-target="163">0</h4><span>Yelp Reviews</span></div>
         <div><h4>La Jolla</h4><span>Herschel Ave</span></div>
       </div>
     </div>
   </div>
 </section>
 
+<!-- SERVICES -->
 <section id="services" class="services-section">
   <div class="services-header reveal">
-    <div class="section-label">Services</div>
+    <div class="section-label section-label--center">Services</div>
     <h2 class="section-heading" style="margin-left:auto;margin-right:auto;">Tailored to you, every time</h2>
     <p>Every service begins with a personal consultation. The team crafts each look to complement your unique features, lifestyle, and personal style.</p>
   </div>
   <div class="services-grid">
-    <div class="service-card reveal"><span class="service-icon">✂</span><h3>Precision Cuts</h3><p>Award-winning cuts shaped to your face and lifestyle — from modern bobs to textured layers, for all styles and lengths.</p></div>
-    <div class="service-card reveal"><span class="service-icon">◎</span><h3>Color & Balayage</h3><p>Customized colour is at the heart of JAX & KING. Hollywood highlights, balayage, ombré, sombré — all with custom-mixed formulas for rich, lasting results.</p></div>
-    <div class="service-card reveal"><span class="service-icon">❖</span><h3>Extensions</h3><p>Premium hair extensions for added volume, length, or both. Seamlessly blended and personalized for a natural, elevated look.</p></div>
-    <div class="service-card reveal"><span class="service-icon">⬡</span><h3>Styling & Finish</h3><p>Event-ready styles, editorial blowouts, and seasonal trend forecasting. Parisian-inspired finishing for every occasion.</p></div>
+    <div class="service-card reveal">
+      <svg class="service-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4l4 12-4 12M24 4l-4 12 4 12M12 16h8"/></svg>
+      <h3>Precision Cuts</h3>
+      <p>Award-winning cuts shaped to your face and lifestyle — from modern bobs to textured layers, for all styles and lengths.</p>
+    </div>
+    <div class="service-card reveal">
+      <svg class="service-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="16" cy="16" r="10"/><circle cx="16" cy="16" r="5"/><circle cx="16" cy="16" r="1.5"/></svg>
+      <h3>Color & Balayage</h3>
+      <p>Customized colour is at the heart of JAX & KING. Hollywood highlights, balayage, ombré, sombré — all with custom-mixed formulas.</p>
+    </div>
+    <div class="service-card reveal">
+      <svg class="service-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4v24M10 8c0 4 6 6 6 12M22 8c0 4-6 6-6 12"/><path d="M8 28h16"/></svg>
+      <h3>Extensions</h3>
+      <p>Premium hair extensions for added volume, length, or both. Seamlessly blended and personalized for a natural, elevated look.</p>
+    </div>
+    <div class="service-card reveal">
+      <svg class="service-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4l4 8h8l-6 5 2 9-8-5-8 5 2-9-6-5h8z"/></svg>
+      <h3>Styling & Finish</h3>
+      <p>Event-ready styles, editorial blowouts, and seasonal trend forecasting. Parisian-inspired finishing for every occasion.</p>
+    </div>
   </div>
 </section>
 
+<!-- TESTIMONIALS -->
 <section id="reviews">
   <div class="testimonials">
-    <div class="section-label reveal">What Clients Say</div>
+    <div class="section-label section-label--center reveal">What Clients Say</div>
     <h2 class="section-heading reveal" style="margin-left:auto;margin-right:auto;">Consistently exceptional</h2>
     <div class="testimonial-quote reveal">You deserve style and luxury, no matter where you live. At Jax & King, every visit is a transformative experience — not just a haircut.</div>
     <div class="testimonial-cards">
@@ -382,6 +521,7 @@
   </div>
 </section>
 
+<!-- HOURS & LOCATION -->
 <section id="visit">
   <div class="info-section">
     <div>
@@ -396,6 +536,7 @@
         <li data-day="6"><span class="day">Saturday</span><span class="time">8:00 AM – 7:00 PM</span></li>
         <li data-day="0"><span class="day">Sunday</span><span class="time">11:00 AM – 5:00 PM</span></li>
       </ul>
+      <div class="open-status" id="openStatus"></div>
     </div>
     <div class="info-divider"></div>
     <div>
@@ -414,8 +555,9 @@
   </div>
 </section>
 
+<!-- CTA -->
 <section class="cta-section">
-  <div class="section-label reveal">Ready?</div>
+  <div class="section-label section-label--center reveal">Ready?</div>
   <h2 class="reveal">Your best hair starts here</h2>
   <p class="reveal">Book your appointment with the JAX & KING team</p>
   <div class="cta-buttons reveal">
@@ -424,6 +566,7 @@
   </div>
 </section>
 
+<!-- FOOTER -->
 <footer>
   <div class="footer-top">
     <div class="footer-logo">JAX & KING</div>
@@ -440,26 +583,105 @@
 </footer>
 
 <script>
+  // ── Scroll progress bar ──
+  const scrollProgress = document.getElementById('scrollProgress');
+  window.addEventListener('scroll', () => {
+    const h = document.documentElement;
+    const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+    scrollProgress.style.width = pct + '%';
+  }, { passive: true });
+
+  // ── Nav scroll effect ──
   const navbar = document.getElementById('navbar');
-  window.addEventListener('scroll', () => { navbar.classList.toggle('scrolled', window.scrollY > 50); }, { passive: true });
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 50);
+  }, { passive: true });
+
+  // ── Animated hamburger toggle ──
   const navToggle = document.getElementById('navToggle');
   const navLinks = document.getElementById('navLinks');
-  navToggle.addEventListener('click', () => { navLinks.classList.toggle('open'); });
-  navLinks.querySelectorAll('a').forEach(link => { link.addEventListener('click', () => navLinks.classList.remove('open')); });
+  navToggle.addEventListener('click', () => {
+    navLinks.classList.toggle('open');
+    navToggle.classList.toggle('open');
+  });
+  navLinks.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      navLinks.classList.remove('open');
+      navToggle.classList.remove('open');
+    });
+  });
+
+  // ── Scroll reveal with stagger ──
   const revealObserver = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
         const siblings = entry.target.parentElement.querySelectorAll('.reveal');
         const i = Array.from(siblings).indexOf(entry.target);
-        entry.target.style.transitionDelay = `${i * 0.1}s`;
+        entry.target.style.transitionDelay = `${i * 0.12}s`;
         entry.target.classList.add('visible');
       }
     });
   }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
   document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+  // ── Highlight today's hours ──
   const today = new Date().getDay();
   const todayRow = document.querySelector(`#hoursList li[data-day="${today}"]`);
   if (todayRow) todayRow.classList.add('today');
+
+  // ── Open / Closed status indicator ──
+  function updateOpenStatus() {
+    const now = new Date();
+    const day = now.getDay();
+    const hour = now.getHours();
+    const min = now.getMinutes();
+    const time = hour + min / 60;
+    const el = document.getElementById('openStatus');
+    let isOpen = false;
+    if (day >= 1 && day <= 5) isOpen = time >= 9 && time < 20;
+    else if (day === 6) isOpen = time >= 8 && time < 19;
+    else if (day === 0) isOpen = time >= 11 && time < 17;
+    el.className = 'open-status ' + (isOpen ? 'is-open' : 'is-closed');
+    el.innerHTML = `<span class="pulse"></span>${isOpen ? 'Open Now' : 'Currently Closed'}`;
+  }
+  updateOpenStatus();
+  setInterval(updateOpenStatus, 60000);
+
+  // ── Animated counters ──
+  const counterObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && !entry.target.dataset.counted) {
+        entry.target.dataset.counted = 'true';
+        const target = parseInt(entry.target.dataset.target);
+        const suffix = entry.target.dataset.suffix || '';
+        const duration = 1800;
+        const start = performance.now();
+        function tick(now) {
+          const elapsed = now - start;
+          const progress = Math.min(elapsed / duration, 1);
+          const ease = 1 - Math.pow(1 - progress, 3);
+          const current = Math.floor(ease * target);
+          entry.target.textContent = current + suffix;
+          if (progress < 1) requestAnimationFrame(tick);
+          else entry.target.textContent = target + suffix;
+        }
+        requestAnimationFrame(tick);
+      }
+    });
+  }, { threshold: 0.5 });
+  document.querySelectorAll('.counter').forEach(el => counterObserver.observe(el));
+
+  // ── Ambient hero particles ──
+  const particleContainer = document.getElementById('heroParticles');
+  for (let i = 0; i < 12; i++) {
+    const p = document.createElement('div');
+    p.classList.add('particle');
+    p.style.left = Math.random() * 100 + '%';
+    p.style.animationDuration = (12 + Math.random() * 18) + 's';
+    p.style.animationDelay = (Math.random() * 15) + 's';
+    p.style.width = p.style.height = (1 + Math.random() * 2) + 'px';
+    particleContainer.appendChild(p);
+  }
 </script>
 </body>
 </html>
